@@ -11,10 +11,12 @@ import { Post } from './posts/post.entity';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '', // <--- replace this
+      password: '', // 
       database: 'testdb',
       entities: [User, Post],
-      synchronize: true, // Only for dev
+      synchronize: true, 
+
+    
     }),
     UsersModule,
     PostsModule,
