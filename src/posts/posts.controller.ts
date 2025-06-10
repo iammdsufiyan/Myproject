@@ -1,14 +1,28 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body ,Inject} from '@nestjs/common';
 import { Post as BlogPost } from './post.entity';
 import { DataSource } from 'typeorm';
-
+import { Cache } from 'cache-manager';
 @Controller('posts')
 export class PostsController {
-  constructor(private dataSource: DataSource) {}
-
+  constructor(
+    private dataSource: DataSource,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache ,
+  ) {}
   @Get()
   async findAll(): Promise<BlogPost[]> {
-    return this.dataSource.getRepository(BlogPost).find();
+     const cacheKey = 'all_posts';
+
+    console.log('Checking Redis cache for posts');
+    const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
+    if (cached) {
+      console.log('Returning posts from Redis cache');
+      return cached;
+    }
+    
+    const posts = await this.dataSource.getRepository(BlogPost).find();
+    await this.cacheManager.set(cacheKey, posts, 10);
+    console.log('Stored posts in Redis cache');
+    return posts;  
   }
 
   @Post()

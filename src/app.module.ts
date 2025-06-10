@@ -4,6 +4,10 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { User } from './users/user.entity';
 import { Post } from './posts/post.entity';
+import { createKeyv } from '@keyv/redis';
+import { CacheModule } from '@nestjs/cache-manager';
+import { Keyv } from 'keyv';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -15,11 +19,21 @@ import { Post } from './posts/post.entity';
       database: 'testdb',
       entities: [User, Post],
       synchronize: true, 
-
+      logging: true,
     
     }),
+ CacheModule.registerAsync({
+      useFactory: async () => ({
+        // store: await redisStore(),
+        host: 'localhost',
+        port: 6379,
+        ttl: 5,
+      }),
+      isGlobal: true, 
+    }),
+  
     UsersModule,
     PostsModule,
-  ],
+  ]
 })
 export class AppModule {}

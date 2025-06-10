@@ -1,6 +1,5 @@
 {
     "sqltools.connections": [
-       
         {
             "mysqlOptions": {
                 "authProtocol": "default",
@@ -10,9 +9,23 @@
             "server": "localhost",
             "port": 3306,
             "driver": "MySQL",
+            "name": "mysql",
             "database": "testdb",
             "username": "root",
-            "name": "nestjs",
+            "password": ""
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "my sql",
+            "database": "testdb",
+            "username": "root",
             "password": ""
         }
     ]
