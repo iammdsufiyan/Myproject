@@ -2,8 +2,12 @@ import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete
 import { Post as BlogPost } from './post.entity';
 import { DataSource } from 'typeorm';
 import { Cache } from 'cache-manager';
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from '../middleware/middleware';
+import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
+import { ExceptionFilter }  from '@nestjs/common';
+import { UseFilters } from '@nestjs/common';
+import { HttpExceptionFilter } from '../exception/exception.handle';
+import { ValidationPipe } from '@nestjs/common';
+import { CreatePostDto } from '../dto/dto.user';
 @Controller('posts')
 export class PostsController {
   
@@ -13,6 +17,7 @@ export class PostsController {
   ) {}
   @Get('findAll')
   async findAll(): Promise<BlogPost[]> {
+  
      const cacheKey = 'all_posts';
     console.log('Checking Redis cache for posts');
     const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
@@ -22,13 +27,15 @@ export class PostsController {
     }
     
     const posts = await this.dataSource.getRepository(BlogPost).find();
+     throw new ForbiddenException(); 
     await this.cacheManager.set(cacheKey, posts, 10);
     console.log('Stored posts in Redis cache');
     return posts;  
   }
 
   @Post('create')
-  async create(@Body() data: Partial<BlogPost>): Promise<BlogPost> {
+  @UseFilters(new HttpExceptionFilter())
+  async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<BlogPost> {
     const post = this.dataSource.getRepository(BlogPost).create(data);
     return this.dataSource.getRepository(BlogPost).save(post);
   }

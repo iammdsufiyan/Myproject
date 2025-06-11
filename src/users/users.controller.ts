@@ -1,10 +1,13 @@
 import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch ,HttpException
-, HttpStatus , 
+, HttpStatus , ParseIntPipe , Query
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from './user.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { Validator } from 'class-validator';
+import { CreatePostDto } from '../dto/dto.user';
+import { ValidationPipe } from '@nestjs/common';
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 export class UsersController {
@@ -39,7 +42,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userRepo.findOne({
       where: { id: +id },
       relations: ['posts'],
@@ -51,7 +54,7 @@ export class UsersController {
   }
 
   @Post('create')
-  async create(@Body() data: Partial<User>): Promise<User> {
+  async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<User> {
     const user = this.userRepo.create(data);
     return this.userRepo.save(user);
   }
