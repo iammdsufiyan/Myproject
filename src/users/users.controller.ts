@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch ,HttpException
+, HttpStatus , 
+} from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from './user.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -12,8 +14,19 @@ export class UsersController {
     this.userRepo = this.dataSource.getRepository(User);
   }
 
-  @Get()
+  @Get('findAll')
   async findAll(): Promise<User[]> {
+    //  try {
+    //   await this.userRepo.findAll();
+    // } catch (error) {
+    //   throw new HttpException({
+    //     status: HttpStatus.FORBIDDEN,
+    //     error: 'This is a custom message',
+    //   }, HttpStatus.FORBIDDEN, {
+    //     cause: error
+    //   });
+    // }
+    console.log('Fetching all users');
     const cacheKey = 'all_users';
     const cached = await this.cacheManager.get<User[]>(cacheKey);
     if (cached) {
@@ -37,7 +50,7 @@ export class UsersController {
     return user;
   }
 
-  @Post()
+  @Post('create')
   async create(@Body() data: Partial<User>): Promise<User> {
     const user = this.userRepo.create(data);
     return this.userRepo.save(user);

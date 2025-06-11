@@ -11,7 +11,7 @@ export class PostsController {
     private dataSource: DataSource,
     @Inject('CACHE_MANAGER') private cacheManager: Cache ,
   ) {}
-  @Get()
+  @Get('findAll')
   async findAll(): Promise<BlogPost[]> {
      const cacheKey = 'all_posts';
     console.log('Checking Redis cache for posts');
@@ -27,7 +27,7 @@ export class PostsController {
     return posts;  
   }
 
-  @Post()
+  @Post('create')
   async create(@Body() data: Partial<BlogPost>): Promise<BlogPost> {
     const post = this.dataSource.getRepository(BlogPost).create(data);
     return this.dataSource.getRepository(BlogPost).save(post);
