@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body ,Inject} from '@nestjs/common';
+import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete } from '@nestjs/common';
 import { Post as BlogPost } from './post.entity';
 import { DataSource } from 'typeorm';
 import { Cache } from 'cache-manager';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from '../middleware/middleware';
 @Controller('posts')
 export class PostsController {
+  
   constructor(
     private dataSource: DataSource,
     @Inject('CACHE_MANAGER') private cacheManager: Cache ,
@@ -11,7 +14,6 @@ export class PostsController {
   @Get()
   async findAll(): Promise<BlogPost[]> {
      const cacheKey = 'all_posts';
-
     console.log('Checking Redis cache for posts');
     const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
     if (cached) {
@@ -29,5 +31,13 @@ export class PostsController {
   async create(@Body() data: Partial<BlogPost>): Promise<BlogPost> {
     const post = this.dataSource.getRepository(BlogPost).create(data);
     return this.dataSource.getRepository(BlogPost).save(post);
+  }
+  @Delete(':id')
+  async delete(@Param('id') id: number): Promise<void> {    
+    const post = await this.dataSource.getRepository(BlogPost).findOne({ where: { id: +id } });
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+    await this.dataSource.getRepository(BlogPost).remove(post);
   }
 }

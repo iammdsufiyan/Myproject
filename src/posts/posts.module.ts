@@ -1,9 +1,16 @@
-import { Module } from '@nestjs/common';
+
 
 import { PostsController } from './posts.controller';
-
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from '../middleware/middleware';
 @Module({
 
   controllers: [PostsController]
 })
-export class PostsModule {}
+export class PostsModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('posts');
+  }
+}
