@@ -1,13 +1,12 @@
-import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete  } from '@nestjs/common';
 import { Post as BlogPost } from './post.entity';
 import { DataSource } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
-import { ExceptionFilter }  from '@nestjs/common';
-import { UseFilters } from '@nestjs/common';
-import { HttpExceptionFilter } from '../exception/exception.handle';
 import { ValidationPipe } from '@nestjs/common';
 import { CreatePostDto } from '../dto/dto.user';
+import { AuthGuard } from '../gaurd/auth.guard';
+import { UseGuards } from '@nestjs/common';
 @Controller('posts')
 export class PostsController {
   
@@ -15,9 +14,9 @@ export class PostsController {
     private dataSource: DataSource,
     @Inject('CACHE_MANAGER') private cacheManager: Cache ,
   ) {}
-  @Get('findAll')
-  async findAll(): Promise<BlogPost[]> {
   
+  @Get()
+  async findAll(): Promise<BlogPost[]> {
      const cacheKey = 'all_posts';
     console.log('Checking Redis cache for posts');
     const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
@@ -25,16 +24,23 @@ export class PostsController {
       console.log('Returning posts from Redis cache');
       return cached;
     }
-    
     const posts = await this.dataSource.getRepository(BlogPost).find();
      throw new ForbiddenException(); 
     await this.cacheManager.set(cacheKey, posts, 10);
     console.log('Stored posts in Redis cache');
     return posts;  
+  } 
+@Get(':id')
+async findOne(@Param('id') id: number): Promise<BlogPost> {
+  const post = await this.dataSource.getRepository(BlogPost).findOne({ where: { id: +id } });
+  if (!post) {
+    throw new NotFoundException(`Post with ID ${id} not found`);
   }
-
+  return post;
+} 
   @Post('create')
-  @UseFilters(new HttpExceptionFilter())
+  //@UseGuards(AuthGuard)
+  // @UseFilters(new HttpExceptionFilter())
   async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<BlogPost> {
     const post = this.dataSource.getRepository(BlogPost).create(data);
     return this.dataSource.getRepository(BlogPost).save(post);

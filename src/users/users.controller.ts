@@ -12,11 +12,9 @@ import { ValidationPipe } from '@nestjs/common';
 @UseInterceptors(CacheInterceptor)
 export class UsersController {
   private userRepo;
-
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
-
   @Get('findAll')
   async findAll(): Promise<User[]> {
     //  try {
@@ -40,7 +38,6 @@ export class UsersController {
     await this.cacheManager.set(cacheKey, users);
     return users;
   }
-
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userRepo.findOne({
@@ -52,7 +49,6 @@ export class UsersController {
     }
     return user;
   }
-
   @Post('create')
   async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<User> {
     const user = this.userRepo.create(data);
