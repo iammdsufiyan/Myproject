@@ -8,16 +8,16 @@ import { CreatePostDto } from '../dto/dto.user';
 import { AuthGuard } from '../gaurd/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { PostService } from './posts.service';
-
+import { LoggingInterceptor } from '../interceptor/logging.interceptor';
 @Controller('posts')
-
+@UseInterceptors(LoggingInterceptor)
 export class PostsController {
   
   constructor(
     private dataSource: DataSource,
    // private postService: PostService,
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
-    
+  
   ) {}
 
   // @Get('with-user')

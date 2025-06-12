@@ -8,16 +8,19 @@ import { Cache } from 'cache-manager';
 import { Validator } from 'class-validator';
 import { CreatePostDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
+import {LoggingInterceptor} from '../interceptor/logging.interceptor';
 
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
-
+@UseInterceptors(LoggingInterceptor)
 export class UsersController {
   private userRepo;
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
   
+
+
   @Get('findAll')
   async findAll(): Promise<User[]> {
     //  try {
