@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from '../users/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , JoinColumn} from 'typeorm';
+import { User } from '../users/users.entity';
 
 @Entity()
 export class Post {
@@ -13,5 +13,6 @@ export class Post {
   content: string;
 
   @ManyToOne(() => User, (user) => user.posts)
+   @JoinColumn({ name: 'userId' })
   user: User;
 }

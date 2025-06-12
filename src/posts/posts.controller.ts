@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete  } from '@nestjs/common';
-import { Post as BlogPost } from './post.entity';
+import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete ,UseInterceptors } from '@nestjs/common';
+import { Post as BlogPost } from './posts.entity';
 import { DataSource } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
@@ -7,13 +7,23 @@ import { ValidationPipe } from '@nestjs/common';
 import { CreatePostDto } from '../dto/dto.user';
 import { AuthGuard } from '../gaurd/auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { PostService } from './posts.service';
+
 @Controller('posts')
+
 export class PostsController {
   
   constructor(
     private dataSource: DataSource,
-    @Inject('CACHE_MANAGER') private cacheManager: Cache ,
+   // private postService: PostService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
+    
   ) {}
+
+  // @Get('with-user')
+  // async getPostsWithUsers() {
+  //   return this.postService.getAllPostsWithUsers();
+  // }
   
   @Get()
   async findAll(): Promise<BlogPost[]> {

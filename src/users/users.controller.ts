@@ -2,19 +2,22 @@ import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,
 , HttpStatus , ParseIntPipe , Query
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { User } from './user.entity';
+import { User } from './users.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Validator } from 'class-validator';
 import { CreatePostDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
+
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
+
 export class UsersController {
   private userRepo;
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
+  
   @Get('findAll')
   async findAll(): Promise<User[]> {
     //  try {

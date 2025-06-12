@@ -2,12 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
-import { User } from './users/user.entity';
-import { Post } from './posts/post.entity';
+import { User } from './users/users.entity';
+import { Post } from './posts/posts.entity';
 import { createKeyv } from '@keyv/redis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Keyv } from 'keyv';
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({

@@ -1,14 +1,14 @@
 import { IsString, IsNotEmpty , Matches } from 'class-validator';
 export class CreatePostDto {
-  @IsString()
-  @IsNotEmpty()
-   @Matches(/\S/, { message: 'title should not be just spaces' })
-  title: string;
+  // @IsString()
+  // @IsNotEmpty()
+  //  @Matches(/\S/, { message: 'title should not be just spaces' })
+  // title: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/\S/, { message: 'content should not be just spaces' })
-  content: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // @Matches(/\S/, { message: 'content should not be just spaces' })
+  // content: string;
 
 // @IsString()
 // @IsNotEmpty()
