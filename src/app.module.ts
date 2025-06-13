@@ -25,6 +25,7 @@ import { Post } from './posts/posts.entity';
         database: config.get<string>('DB_NAME'),
       entities: [User, Post],
         synchronize: true,
+         autoLoadEntities: true,
       }),
     }),
     CacheModule.registerAsync({
@@ -35,7 +36,7 @@ import { Post } from './posts/posts.entity';
       }),
       isGlobal: true, 
     }),
- 
+   
     UsersModule,
     PostsModule,
   ]

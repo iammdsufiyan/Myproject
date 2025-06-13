@@ -13,9 +13,10 @@ import { Post as postss} from './posts.entity';
     TypeOrmModule.forFeature([postss])
   ],
   providers: [PostService],
-  controllers: [PostsController]
+  controllers: [PostsController],
+ 
 })
-export class PostsModule implements NestModule{
+export class PostsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
