@@ -6,12 +6,13 @@ import { LoggerMiddleware } from '../middleware/middleware';
 import { UsersController } from 'src/users/users.controller';
 import { PostService } from './posts.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post as postss} from './posts.entity';
+// src/posts/posts.module.ts
 @Module({
   imports:[
-    TypeOrmModule.forFeature([Post])
+    TypeOrmModule.forFeature([postss])
   ],
-  // providers: [PostService],
-  // exports: [PostService],
+  providers: [PostService],
   controllers: [PostsController]
 })
 export class PostsModule implements NestModule{

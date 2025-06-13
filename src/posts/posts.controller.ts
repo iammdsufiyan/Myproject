@@ -5,41 +5,32 @@ import { Cache } from 'cache-manager';
 import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
 import { ValidationPipe } from '@nestjs/common';
 import { CreatePostDto } from '../dto/dto.user';
-import { AuthGuard } from '../gaurd/auth.guard';
-import { UseGuards } from '@nestjs/common';
 import { PostService } from './posts.service';
 import { LoggingInterceptor } from '../interceptor/logging.interceptor';
 @Controller('posts')
 @UseInterceptors(LoggingInterceptor)
 export class PostsController {
-  
   constructor(
     private dataSource: DataSource,
-   // private postService: PostService,
+    private postService: PostService,
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
-  
   ) {}
-
-  // @Get('with-user')
-  // async getPostsWithUsers() {
-  //   return this.postService.getAllPostsWithUsers();
-  // }
-  
-  @Get()
-  async findAll(): Promise<BlogPost[]> {
-     const cacheKey = 'all_posts';
-    console.log('Checking Redis cache for posts');
-    const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
-    if (cached) {
-      console.log('Returning posts from Redis cache');
-      return cached;
-    }
-    const posts = await this.dataSource.getRepository(BlogPost).find();
-     throw new ForbiddenException(); 
-    await this.cacheManager.set(cacheKey, posts, 10);
-    console.log('Stored posts in Redis cache');
-    return posts;  
-  } 
+  @Get('inner')
+getInnerJoinedPosts() {
+  console.log('Fetching posts inner join');
+  return this.postService.getPostsWithUsersInnerJoin();
+}
+ @Get('findAll')
+ async findAll(): Promise<BlogPost[]> {
+   const cacheKey = 'all_posts';
+   const cached = await this.cacheManager.get<BlogPost[]>(cacheKey);
+   if (cached) {
+     return cached;
+   }
+   const posts = await this.dataSource.getRepository(BlogPost).find();
+   await this.cacheManager.set(cacheKey, posts, 10);
+   return posts;
+ }
 @Get(':id')
 async findOne(@Param('id') id: number): Promise<BlogPost> {
   const post = await this.dataSource.getRepository(BlogPost).findOne({ where: { id: +id } });

@@ -9,7 +9,7 @@ import { Validator } from 'class-validator';
 import { CreatePostDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
 import {LoggingInterceptor} from '../interceptor/logging.interceptor';
-
+import { Userss} from './user.decorator'
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 @UseInterceptors(LoggingInterceptor)
@@ -19,8 +19,10 @@ export class UsersController {
     this.userRepo = this.dataSource.getRepository(User);
   }
   
-
-
+// @Get()
+// async findOne(@Userss('name') name: string) {
+//   console.log(`Hello ${name}`);
+// }
   @Get('findAll')
   async findAll(): Promise<User[]> {
     //  try {

@@ -12,6 +12,10 @@ export class Post {
   @Column({ nullable: true })
   content: string;
 
+  @Column({nullable:true})
+  location: string;
+
+
   @ManyToOne(() => User, (user) => user.posts)
    @JoinColumn({ name: 'userId' })
   user: User;

@@ -12,7 +12,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({nullable:true})
+  location: string;
+
   @OneToMany(() => Post, (post) => post.user)
- 
   posts: Post[];
 }
