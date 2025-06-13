@@ -5,11 +5,10 @@ import { DataSource } from 'typeorm';
 import { User } from './users.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { Validator } from 'class-validator';
 import { CreatePostDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
 import {LoggingInterceptor} from '../interceptor/logging.interceptor';
-import { Userss} from './user.decorator'
+
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 @UseInterceptors(LoggingInterceptor)
@@ -18,7 +17,6 @@ export class UsersController {
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
-  
 // @Get()
 // async findOne(@Userss('name') name: string) {
 //   console.log(`Hello ${name}`);
