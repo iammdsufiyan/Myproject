@@ -1,17 +1,18 @@
-import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch ,HttpException
-, HttpStatus , ParseIntPipe , Query
+import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch 
+ , ParseIntPipe ,Version
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from './users.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { CreatePostDto } from '../dto/dto.user';
+import { CreateUserDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
 import {LoggingInterceptor} from '../interceptor/logging.interceptor';
-
+import { ClassSerializerInterceptor } from '@nestjs/common';
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 @UseInterceptors(LoggingInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   private userRepo;
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
@@ -22,6 +23,7 @@ export class UsersController {
 //   console.log(`Hello ${name}`);
 // }
   @Get('findAll')
+  @Version('1')
   async findAll(): Promise<User[]> {
     //  try {
     //   await this.userRepo.findAll();
@@ -45,6 +47,7 @@ export class UsersController {
     return users;
   }
   @Get(':id')
+  @Version('2')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userRepo.findOne({
       where: { id: +id },
@@ -56,7 +59,7 @@ export class UsersController {
     return user;
   }
   @Post('create')
-  async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<User> {
+  async create(@Body(new ValidationPipe()) data: CreateUserDto): Promise<User> {
     const user = this.userRepo.create(data);
     return this.userRepo.save(user);
   }

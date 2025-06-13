@@ -2,11 +2,12 @@ import { Controller, Get, Post, Body ,Inject , Param ,NotFoundException , Delete
 import { Post as BlogPost } from './posts.entity';
 import { DataSource } from 'typeorm';
 import { Cache } from 'cache-manager';
-import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
 import { ValidationPipe } from '@nestjs/common';
-import { CreatePostDto } from '../dto/dto.user';
 import { PostService } from './posts.service';
 import { LoggingInterceptor } from '../interceptor/logging.interceptor';
+import{PostDto} from '../dto/dto.posts';
+import { plainToInstance } from 'class-transformer';
+//   async delete(@Param('id') id: number): Promise<void> {
 @Controller('posts')
 @UseInterceptors(LoggingInterceptor)
 export class PostsController {
@@ -37,12 +38,13 @@ async findOne(@Param('id') id: number): Promise<BlogPost> {
   if (!post) {
     throw new NotFoundException(`Post with ID ${id} not found`);
   }
-  return post;
-} 
+  return post
+}
+
   @Post('create')
   //@UseGuards(AuthGuard)
   // @UseFilters(new HttpExceptionFilter())
-  async create(@Body(new ValidationPipe()) data: CreatePostDto): Promise<BlogPost> {
+  async create(@Body(new ValidationPipe()) data: PostDto): Promise<BlogPost> {
     const post = this.dataSource.getRepository(BlogPost).create(data);
     return this.dataSource.getRepository(BlogPost).save(post);
   }

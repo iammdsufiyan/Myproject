@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , JoinColumn} from 'typeorm';
 import { User } from '../users/users.entity';
-
+import { Exclude } from 'class-transformer';
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
@@ -15,7 +15,7 @@ export class Post {
   @Column({nullable:true})
   location: string;
 
-
+ 
   @ManyToOne(() => User, (user) => user.posts)
    @JoinColumn({ name: 'userId' })
   user: User;
