@@ -4,9 +4,11 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
-import { ConfigService } from '@nestjs/config';
 import { User } from './users/users.entity';
 import { Post } from './posts/posts.entity';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +32,9 @@ import { Post } from './posts/posts.entity';
     }),
     UsersModule,
     PostsModule,
+    AuthModule,
   ],
+  controllers: [AuthController],
+  providers: [AuthService],
 })
 export class AppModule {}

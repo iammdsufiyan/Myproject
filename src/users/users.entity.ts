@@ -14,9 +14,8 @@ export class User {
 
   // @Column({nullable:true})
   // location: string;
-  
-  
- @Column  ()
+
+ @Column()
   location: string;
 
   @OneToMany(() => Post, (post) => post.user)

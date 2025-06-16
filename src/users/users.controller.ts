@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, NotFoundException ,UseInterceptors,Inject,Delete, Patch 
- , ParseIntPipe ,Version
+import {
+  Controller, Get, Post, Body, Param, NotFoundException, UseInterceptors, Inject, Delete, Patch
+  , ParseIntPipe, Version
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from './users.entity';
@@ -7,7 +8,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { CreateUserDto } from '../dto/dto.user';
 import { ValidationPipe } from '@nestjs/common';
-import {LoggingInterceptor} from '../interceptor/logging.interceptor';
+import { LoggingInterceptor } from '../interceptor/logging.interceptor';
 import { ClassSerializerInterceptor } from '@nestjs/common';
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
@@ -18,10 +19,10 @@ export class UsersController {
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
-// @Get()
-// async findOne(@Userss('name') name: string) {
-//   console.log(`Hello ${name}`);
-// }
+  // @Get()
+  // async findOne(@Userss('name') name: string) {
+  //   console.log(`Hello ${name}`);
+  // }
   @Get('findAll')
   @Version('1')
   async findAll(): Promise<User[]> {
@@ -63,7 +64,7 @@ export class UsersController {
     const user = this.userRepo.create(data);
     return this.userRepo.save(user);
   }
- @Delete(':id')
+  @Delete(':id')
   async delete(@Param('id') id: number): Promise<void> {
     const user = await this.userRepo.findOne({ where: { id: +id } });
     if (!user) {
@@ -71,8 +72,8 @@ export class UsersController {
     }
     await this.userRepo.remove(user);
   }
-@Patch(':id')
-  async update(@Param('id') id: number, @Body() data: Partial<User>): Promise<User> { 
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() data: Partial<User>): Promise<User> {
     const user = await this.userRepo.findOne({ where: { id: +id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
