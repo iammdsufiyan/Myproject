@@ -9,36 +9,27 @@ import { User } from './users/users.entity';
 import { Post } from './posts/posts.entity';
 @Module({
   imports: [
-  ConfigModule.forRoot({
+    ConfigModule.forRoot({
       isGlobal: true, // Makes the configuration available globally
       envFilePath: '.env', // Path to your environment variables file
-    }), 
-     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'mysql',
-        host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT') || '3306', 10),
-        username: config.get<string>('DB_USERNAME'),
-        password: config.get<string>('DB_PASSWORD'),
-        database: config.get<string>('DB_NAME'),
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: '',
+      database: 'testdb',
       entities: [User, Post],
-        synchronize: true,
-         autoLoadEntities: true,
-      }),
+      synchronize: true,
     }),
-    CacheModule.registerAsync({
-      useFactory: async (config: ConfigService) => ({
-        host: 'localhost',
-        port: 6379,
-        ttl: 5,
-      }),
-      isGlobal: true, 
+    CacheModule.register({
+      isGlobal: true, // Makes the cache available globally
+      ttl: 5, // Time to live for cache entries in seconds
+      max: 100, // Maximum number of items in the cache
     }),
-   
     UsersModule,
     PostsModule,
-  ]
+  ],
 })
 export class AppModule {}
