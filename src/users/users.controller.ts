@@ -19,23 +19,11 @@ export class UsersController {
   constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
     this.userRepo = this.dataSource.getRepository(User);
   }
-  // @Get()
-  // async findOne(@Userss('name') name: string) {
-  //   console.log(`Hello ${name}`);
-  // }
+
   @Get('findAll')
   @Version('1')
   async findAll(): Promise<User[]> {
-    //  try {
-    //   await this.userRepo.findAll();
-    // } catch (error) {
-    //   throw new HttpException({
-    //     status: HttpStatus.FORBIDDEN,
-    //     error: 'This is a custom message',
-    //   }, HttpStatus.FORBIDDEN, {
-    //     cause: error
-    //   });
-    // }
+
     console.log('Fetching all users');
     const cacheKey = 'all_users';
     const cached = await this.cacheManager.get<User[]>(cacheKey);
@@ -51,8 +39,8 @@ export class UsersController {
   @Version('2')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userRepo.findOne({
-      where: { id: +id },
-      relations: ['posts'],
+   where: { id: +id },
+  relations: ['posts'],
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
