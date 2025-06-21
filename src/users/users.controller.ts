@@ -1,6 +1,16 @@
 import {
-  Controller, Get, Post, Body, Param, NotFoundException, UseInterceptors, Inject, Delete, Patch
-  , ParseIntPipe, Version
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  NotFoundException,
+  UseInterceptors,
+  Inject,
+  Delete,
+  Patch,
+  ParseIntPipe,
+  Version,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from './users.entity';
@@ -16,14 +26,16 @@ import { ClassSerializerInterceptor } from '@nestjs/common';
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   private userRepo;
-  constructor(private dataSource: DataSource, @Inject('CACHE_MANAGER') private cacheManager: Cache) {
+  constructor(
+    private dataSource: DataSource,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
+  ) {
     this.userRepo = this.dataSource.getRepository(User);
   }
 
   @Get('findAll')
   @Version('1')
   async findAll(): Promise<User[]> {
-
     console.log('Fetching all users');
     const cacheKey = 'all_users';
     const cached = await this.cacheManager.get<User[]>(cacheKey);
@@ -39,8 +51,8 @@ export class UsersController {
   @Version('2')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userRepo.findOne({
-   where: { id: +id },
-  relations: ['posts'],
+      where: { id: +id },
+      relations: ['posts'],
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -61,7 +73,10 @@ export class UsersController {
     await this.userRepo.remove(user);
   }
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() data: Partial<User>): Promise<User> {
+  async update(
+    @Param('id') id: number,
+    @Body() data: Partial<User>,
+  ): Promise<User> {
     const user = await this.userRepo.findOne({ where: { id: +id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
