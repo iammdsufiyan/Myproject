@@ -1,12 +1,42 @@
-{    DATE - 12-06-2025
-    Interceptor 
-    Custome Decorator 
-    Sql joins 
-    Transform
-    Interceptor
-     
+ import {Body, Injectable, Post } from '@nestjs/common'
+@controller('auth')
+ export class auth controller {
+   @ onstructor (
+    private authService:Authservice;
+   ){}
+@Post('signup')
+signup(@Body()authCredentialDto:AuthCredentialDto,):promise<void>{
+return this.authService.signup(authCredentialDto)
 }
 
-not good is an err or 
+@Post('signin')
+signin(@Body() authCredentialDto:AuthCredential):promise<{accessToken:string}>{
+    return this.authService.signin(AuthCredentialDto)
+}
 
-hi this is sunday i am not doing any thing 
+@Injectable()
+export classs AuthService{
+    constructor(
+        @InjectableRepository()
+        private userRepository:Repository<userEntity>:
+    )
+    {}
+
+    async signup(authCredentialDto:AuthCredentialDto):promise<void>{
+        const {username , password} = authCredentialDto;
+            const user = this.userRepository.create({
+                username ,
+                password
+            })
+                await this.userRepository.save(user)
+    }
+}
+   
+async signin(authCredentialDto:AutjCredentialDto):promise<{accessToken:string}>{
+const {username ,password} = authCredentialDto;
+const user = await this.userRepository.findOne({
+    where :{username}
+})
+}
+
+ }
